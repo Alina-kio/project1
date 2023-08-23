@@ -22,7 +22,7 @@ urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
 
     path('category/', views.CategoryAPIViewSet.as_view(
-        {'get': 'list', 'post': 'create'})),
+        {'get': 'list', 'post': 'create', 'put': 'update', 'delete': 'destroy'})),
 
     path('product/', views.ProductsAPIView.as_view(
         {'get': 'list', 'post': 'create'})),
@@ -34,6 +34,7 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
+    path('cart/', CartView.as_view(), name='cart'),
 
 ]
 

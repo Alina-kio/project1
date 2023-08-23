@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 import requests
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 class CategoryAPIViewSet(ModelViewSet):
     queryset = Category.objects.all()
@@ -88,11 +88,65 @@ def app(request):
 
 
 class CartView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
-        pass
+        user = request.user
+        cart = Cart.objects.filter(user=user, ordered=False).first()
+        queryset = CartItems.objects.filter(cart=cart)
+        serializer = CartItemsSerializer(queryset, many=True)
+        return Response(serializer.data)
+        # return Response({'success': 'permissions working'})
 
     def post(self, request):
-        pass
+        data = request.data
+        user = request.user
+        cart, created = Cart.objects.get_or_create(user=user, ordered=False)
+        
+        product = Product.objects.get(id=data.get('product'))
+        price = product.price
+        quantity = data.get('quantity')
+        cart_items = CartItems(cart=cart, user=user, product=product, price=price, quantity=quantity)
+        cart_items.save()
 
-    def update(self, request):
-        pass
+        total_price = 0
+        cart_items = CartItems.objects.filter(user=user, cart=cart.id)
+        for items in cart_items:
+            total_price += items.price
+        cart.total_price = total_price
+        cart.save()
+
+        return Response({'success': 'Items Added to your cart.'})
+
+
+    def put(self, request):
+        data = request.data
+        cart_items = CartItems.objects.get(id=data.get('id'))
+        quantity = data.get('quantity')
+        cart_items.quantity += quantity
+        cart_items.save()
+
+
+
+        user = request.user
+        cart, created = Cart.objects.get_or_create(user=user, ordered=False)
+        total_price = 0
+        cart_items = CartItems.objects.filter(user=user, cart=cart.id)
+        for items in cart_items:
+            total_price += items.price
+        cart.total_price = total_price
+        cart.save()
+        return Response({'success': 'Items Updated.'})
+
+
+
+    def delete(self, request):
+        user = request.user
+        data = request.data
+
+        cart_items = CartItems.objects.get(id=data.get('id'))
+        cart_items.delete()
+
+        cart = Cart.objects.filter(user=user, ordered=False).first()
+        queryset = CartItems.objects.filter(cart=cart)
+        serializer = CartItemsSerializer(queryset, many=True)
+        return Response(serializer.data)

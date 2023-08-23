@@ -118,6 +118,8 @@ class ProfileView(APIView):
 
             user.set_password(serializer.validated_data["new_password"])
             user.save()
-            return Response({"message": "Password successfully changed."}, status=status.HTTP_200_OK)
-
+            return Response({"message": "Password successfully changed.",
+                             "username": user.username,
+                             "email": user.email,}, 
+                             status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
