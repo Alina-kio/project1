@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 from product import views
 from . import swagger
 from django.conf import settings
@@ -35,6 +35,8 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     path('cart/', CartView.as_view(), name='cart'),
+    path('orders/', order),
+    path('orderitems/', OrderItemsAPI.as_view(), name='orderitems'),
 
 ]
 

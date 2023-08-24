@@ -66,7 +66,7 @@ class Application(models.Model):
 
 
 class Cart(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     ordered = models.BooleanField(default=False, null=True)
     total_price = models.FloatField(default=0)
 
@@ -97,22 +97,22 @@ def correct_price(sender, **kwargs):
     # total_cart_items = CartItems.objects.filter(user = cart_items.user )
     # # cart_items.total_items = len(total_cart_items)
 
-    # cart = Cart.objects.get(id = cart_items.cart.id)
-    # cart.total_price = cart_items.price
-    # cart.save()
+    cart = Cart.objects.get(id = cart_items.cart.id)
+    cart.total_price = cart_items.price
+    cart.save()
 
 
 
-# class Orders(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-#     amount = models.FloatField(default=0)
-#     is_paid = models.BooleanField(default=False)
-#     order_id = models.CharField(max_length=100, blank=True)
-#     payment_id = models.CharField(max_length=100, blank=True)
-#     payment_signature = models.CharField(max_length=100, blank=True)
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='orders')
+    total_price = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    address = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=20)
+    
 
 
-# class OrderedItems(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     order = models.ForeignKey(Orders, on_delete=models.CASCADE)
+class OrderedItems(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)

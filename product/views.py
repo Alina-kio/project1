@@ -150,3 +150,78 @@ class CartView(APIView):
         queryset = CartItems.objects.filter(cart=cart)
         serializer = CartItemsSerializer(queryset, many=True)
         return Response(serializer.data)
+    
+
+
+class OrderItemsAPI(APIView):
+    def get(self, request):
+        queryset = OrderedItems.objects.filter(user = request.user)
+        serializer = OrderItemsSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+
+
+
+class OrderView(ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+    
+    def telegram_bot_sendtext(bot_message):
+        bot_token = '6530814720:AAFw81Gh18RQtbh2qNeRdijNGZsOLnxAhng'
+        bot_chatID = '715766595'
+        send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
+        response = requests.get(send_text)
+        return response.json()
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def order(request):
+    # print(request.user)
+    if request.method == 'GET':
+        queryset = Order.objects.filter(user = request.user)
+        serializer = OrderSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    if request.method == 'POST':
+        user = request.user
+        cart = Cart.objects.filter(user=user, ordered=False).first()
+        if not cart:
+            return Response({'error': 'Cart is empty.'}, status=status.HTTP_400_BAD_REQUEST)
+        cart_id = 1
+        cart = Cart.objects.get(id=cart_id)
+        order = Order.objects.create(
+            user=user,
+            name=request.data.get('name'),
+            cart=cart,
+            total_price=cart,
+            address=request.data.get('address'),
+            phone_number=request.data.get('phone_number')
+        )
+
+        cart_items = CartItems.objects.filter(cart=cart)
+
+        order_summary = (
+            f"Имя: {order.name}\n"
+            f"Адрес: {order.address}\n"
+            f"Номер телефона: {order.phone_number}\n\n"
+            f"Товары:\n"
+        )
+        
+        for cart_item in cart_items:
+            item_summary = (
+                f"Продукт: {cart_item.product.name}\n"
+                f"количество: {cart_item.quantity}\n"
+                f"Цена: {cart_item.price}\n\n"
+            )
+            order_summary += item_summary
+
+        order_summary += f"\nобщая цена: {order.total_price}"
+
+        print(order_summary)
+        test = OrderView.telegram_bot_sendtext(order_summary)
+        print(test)
+
+        return Response({'success': 'Order created and details printed.'})

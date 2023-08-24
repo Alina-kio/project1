@@ -89,7 +89,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if DEBUG:
+if DEBUG is False:
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -100,9 +100,12 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'onlineshop',
-            'USER': 'administrator',
-            'PASSWORD': 'onlineshop',
+            'NAME': 'desk',
+            'USER': 'desk',
+            'PASSWORD': 'desk',
+            # 'NAME': 'onlineshop',
+            # 'USER': 'administrator',
+            # 'PASSWORD': 'onlineshop',
             'PORT': 5432,
             'HOST': 'localhost'
             # 'NAME': os.environ.get('DB_NAME'),
