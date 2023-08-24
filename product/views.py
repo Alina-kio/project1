@@ -190,8 +190,7 @@ def order(request):
         cart = Cart.objects.filter(user=user, ordered=False).first()
         if not cart:
             return Response({'error': 'Cart is empty.'}, status=status.HTTP_400_BAD_REQUEST)
-        cart_id = 1
-        cart = Cart.objects.get(id=cart_id)
+        user = request.user
         order = Order.objects.create(
             user=user,
             name=request.data.get('name'),
