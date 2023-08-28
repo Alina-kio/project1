@@ -153,12 +153,13 @@ class CartView(APIView):
     
 
 
-class OrderItemsAPI(APIView):
-    def get(self, request):
-        queryset = OrderedItems.objects.filter(user = request.user)
-        serializer = OrderItemsSerializer(queryset, many=True)
-        return Response(serializer.data)
-
+class OrderItemsView(ModelViewSet):
+    # def get(self, request):
+    #     queryset = OrderedItems.objects.filter(user = request.user)
+    #     serializer = OrderItemsSerializer(queryset, many=True)
+    #     return Response(serializer.data)
+    queryset = OrderedItems.objects.all()
+    serializer_class = OrderItemsSerializer
 
 
 

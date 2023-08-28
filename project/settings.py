@@ -15,11 +15,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "django-insecure-sv94zg=4vqvjd$3_pt-rh92)^isk77bsi#58ke(#8^@ql@x6@_"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-# if os.environ.get('DEBUG', 'off') == 'on':
-#     DEBUG = True
-# else:
-#     DEBUG = False
 
 DEBUG = True
 
@@ -39,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drf_yasg',
     'rest_framework',
+
     'rest_framework_simplejwt',
     'product.apps.ProductConfig',
     'accounts.apps.AccountsConfig',
@@ -103,9 +99,6 @@ else:
             'NAME': 'desk',
             'USER': 'desk',
             'PASSWORD': 'desk',
-            # 'NAME': 'onlineshop',
-            # 'USER': 'administrator',
-            # 'PASSWORD': 'onlineshop',
             'PORT': 5432,
             'HOST': 'localhost'
             # 'NAME': os.environ.get('DB_NAME'),

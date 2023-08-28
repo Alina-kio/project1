@@ -1,15 +1,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 # from .models import CustomUser
-from .serializers import LoginSerializer, RegistrationSerializer, ChangePasswordSerializer, ProfileSerializer
+from .serializers import *
 from django.utils import timezone
 # from rest_framework.generics import UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from .models import *
+
 
 
 class RegistrationView(APIView):
@@ -134,9 +135,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
-user = User.objects.get(username='alinakim')  # Замените 'your_username' на имя суперпользователя
+user = User.objects.get(username='alina')
 refresh = RefreshToken.for_user(user)
 
 access_token = str(refresh.access_token)
 refresh_token = str(refresh)
 print(access_token)
+
+

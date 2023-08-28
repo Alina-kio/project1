@@ -15,22 +15,21 @@ class ProfileSerializer(serializers.ModelSerializer):
 class RegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['email', 'username', 'password', 'confirm_password']
-        extra_kwargs = {"confirm_password": {"write_only": True}}
+        fields = ['email', 'username', 'password']
 
     def validate(self, data):
-        if data['password'] != data['confirm_password']:
-            raise serializers.ValidationError("Passwords do not match.")
-            # return data
-        
         if len(data) > 5:
             raise serializers.ValidationError("Password must be at least 5 characters long.")
         return data
  
         
     def create(self, validated_data):
-        validated_data.pop('confirm_password')
-        user = CustomUser.objects.create_user(**validated_data)
+        user = CustomUser.objects.create(
+            email=validated_data['email'],
+            username=validated_data['username']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
         return user
 
 
@@ -38,8 +37,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['email', 'username', 'password', 'confirm_password']
-        extra_kwargs = {"confirm_password": {"write_only": True}}
+        fields = ['email', 'username', 'password']
 
 
 
@@ -47,3 +45,5 @@ class LoginSerializer(serializers.ModelSerializer):
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+

@@ -12,7 +12,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 urlpatterns = [
-
+    
     path('admin/', admin.site.urls),
 
     path('register/', RegistrationView.as_view(), name='registration'),
@@ -36,7 +36,8 @@ urlpatterns = [
 
     path('cart/', CartView.as_view(), name='cart'),
     path('orders/', order),
-    path('orderitems/', OrderItemsAPI.as_view(), name='orderitems'),
+    path('orderitems/', OrderItemsView.as_view({'get': 'list', 'post': 'create'})),
+    path('orderitems/<int:pk>/', OrderItemsView.as_view({'get': 'retrieve', 'delete': 'destroy'})),
 
 ]
 
